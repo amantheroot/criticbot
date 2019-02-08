@@ -1,0 +1,22 @@
+Things Needed:
+  Name
+  Poster
+  Summary
+  Release Date
+  Platforms
+  Genres
+  Rating
+  Developer
+  Meta Score
+  User Score
+
+  Most Positive Critic Review
+  Most Negative Critic Review
+  Most Positive User Review
+  Most Negative User Review
+
+  Price
+
+  Worth it?
+
+  Purchase Link
