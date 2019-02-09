@@ -5,15 +5,24 @@ const cheerio = require("cheerio");
 const metaCriticData = (url) => {
   return rp(url).then(html => {
     const $ = cheerio.load(html);
-
+    
     let name = $(".product_title > a > h1").text();
     let imgurl = $("img.product_image").attr("src");
     let summary = $(".product_summary span.data").text();
+
     let releaseDate = $("ul.summary_details li.release_data span.data").text();
     let platforms = $("ul.summary_details li.product_platforms span.data").text().replace(/\n/g, '').split(",").map(pf => pf.trim());
-    let genres = $("#main > .product_details table tbody tr:nth-child(4) td").text().replace(/\n/g, '').split(",").map(gen => gen.trim());
-    let rating = $("#main > .product_details table tbody tr:nth-child(1) td").text();
-    let developer = $("#main > .product_details table tbody tr:nth-child(3) td").text();
+
+    let details = $("#main > .product_details table tbody tr th").text().split(":").slice(0,-1);
+
+    let genresIndex = details.indexOf("Genre(s)");
+    let ratingIndex = details.indexOf("Rating");
+    let developerIndex = details.indexOf("Developer");
+
+    let genres = $(`#main > .product_details table tbody tr:nth-child(${genresIndex+1}) td`).text().replace(/\n/g, '').split(",").map(gen => gen.trim());
+    let rating = $(`#main > .product_details table tbody tr:nth-child(${ratingIndex+1}) td`).text();
+    let developer = $(`#main > .product_details table tbody tr:nth-child(${developerIndex+1}) td`).text();
+
     let metaScore = Number($(".metascore_wrap .metascore_w > span").text());
     let userScore = Number($(".userscore_wrap .metascore_w").text());
 
@@ -66,7 +75,7 @@ const getGameData = (platform, gameName) => {
 
 // Parameters
 let platform = "pc";
-let gameName = "Grand Theft aUto v";
+let gameName = "resident evil";
 
 getGameData(platform, gameName)
   .then(gameData => {
