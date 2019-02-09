@@ -59,25 +59,47 @@ const metaCriticReviews = (url) => {
   })
 }
 
-const getGameData = (platform, gameName) => {
-  let game = gameName.toLowerCase().split(" ").join("-");
+const getGameData = (platformName, gameName) => {
+  let nameFormat = (name) => name.toLowerCase().split(" ").join("-");
+
+  let platform = nameFormat(platformName);
+  switch (platform) {
+    case "ps4":
+      platform = nameFormat("PlayStation 4");
+      break;
+    case "ps3":
+      platform = nameFormat("PlayStation 3");
+      break;
+    default:
+      break;
+  }
+  let game = nameFormat(gameName);
+
+  let platformList = ["PC", "PlayStation 4", "PlayStation 3", "Xbox One", "Xbox 360", "Switch", "Wii U", "3DS", "PlayStation Vita","IOS"];
+  let platformListFormatted = platformList.map(pf => nameFormat(pf));
+  if (!platformListFormatted.includes(platform)) {
+    console.error("Platform Not Found!");
+    return new Promise((resolve) => {resolve(undefined)});
+  } 
+
   let baseUrl = `https://www.metacritic.com/game/${platform}/${game}`;
   let detailsUrl = `${baseUrl}/details`;
 
   return metaCriticData(detailsUrl).then(data => {
     return metaCriticReviews(baseUrl).then(reviews => {
-      return {...data, ...reviews};
+      return {...data, ...reviews, platforms: [...data.platforms, platformList[platformListFormatted.indexOf(platform)]]};
     })
-  }).catch(err => {
-    console.log(err.message)
+  }).catch(() => {
+    console.error("Game Not Found!");
+    return;
   });
 }
 
 // Parameters
-let platform = "pc";
-let gameName = "resident evil";
+let platformName = "ps4";
+let gameName = "Apex Legends";
 
-getGameData(platform, gameName)
+getGameData(platformName, gameName)
   .then(gameData => {
     console.log(gameData);
   });
